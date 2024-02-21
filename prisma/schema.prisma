@@ -2,42 +2,90 @@ generator client {
   provider = "prisma-client-js"
 }
 
-datasource db{
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Users {
-  id        String     @id() @default(uuid()) @db.Uuid
-  name      String     @db.VarChar
-  email     String     @unique @db.VarChar
-  password  String     @db.VarChar
-  salt      String     @db.VarChar
-  role      Roles?      @relation(fields: [role_id], references: [id])
-  role_id   String?     @db.Uuid
-  is_active Boolean    @default(true)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  deleted   Boolean    @default(false)
-  Sessions  Sessions[]
+  id          String     @id() @default(uuid()) @db.Uuid
+  name        String     @db.VarChar
+  email       String     @unique @db.VarChar
+  password    String     @db.VarChar
+  salt        String     @db.VarChar
+  role_id     String?    @db.Uuid
+  is_active   Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deleted     Boolean    @default(false)
+  position_id String     @db.Uuid
+  role        Roles?     @relation(fields: [role_id], references: [id])
+  Sessions    Sessions[]
+  Contens     Content[]
+  position    Positions? @relation(fields: [position_id], references: [id])
 }
 
 model Sessions {
   id            String   @id @default(uuid()) @db.Uuid
-  users         Users    @relation(references: [id], fields: [users_id])
   users_id      String   @db.Uuid
   refresh_token String   @db.Uuid
-  status        Boolean   @default(true)
+  status        Boolean  @default(true)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
   deleted       Boolean  @default(false)
+  users         Users    @relation(references: [id], fields: [users_id])
 }
 
 model Roles {
   id         String   @id() @default(uuid()) @db.Uuid
-  name       String   @db.VarChar()
+  name       String   @db.VarChar(100)
   users      Users[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   deleted    Boolean  @default(false)
+}
+
+model Positions {
+  id         String   @id() @default(uuid()) @db.Uuid
+  name       String   @db.VarChar(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted    Boolean  @default(false)
+  users      Users[]
+}
+
+model Content {
+  id           String          @id() @default(uuid()) @db.Uuid
+  tittle       String          @db.VarChar(100)
+  category_id  String          @db.Uuid
+  desc         String          @db.Text
+  main_content String          @db.Text
+  status       String          @db.VarChar(50)
+  created_by   String          @db.Uuid
+  approved_by  String?         @db.Uuid
+  img_url      String          @db.VarChar()
+  created_at   DateTime        @default(now())
+  updated_at   DateTime        @updatedAt
+  deleted      Boolean         @default(false)
+  categories   ContentCategory @relation(fields: [category_id], references: [id])
+  created_bys  Users           @relation(fields: [created_by], references: [id])
+}
+
+model ContentCategory {
+  id                     String               @id() @default(uuid()) @db.Uuid
+  name                   String               @db.VarChar(100)
+  created_at             DateTime             @default(now())
+  updated_at             DateTime             @updatedAt
+  deleted                Boolean              @default(false)
+  contents               Content[]
+  sub_content_categories SubContentCategory[]
+}
+
+model SubContentCategory {
+  id                  String           @id() @default(uuid()) @db.Uuid
+  content_category_id String           @db.Uuid
+  created_at          DateTime         @default(now())
+  updated_at          DateTime         @updatedAt
+  deleted             Boolean          @default(false)
+  content_category    ContentCategory? @relation(references: [id], fields: [content_category_id])
 }

@@ -1,9 +1,9 @@
-import { prismaClient } from "../src/config/database.js"
+import {prismaClient} from "../src/config/database.js"
 
 const main = async () => {
     await prismaClient.roles.createMany({
-        data:[
-            {name :"admin"},
+        data: [
+            {name: "admin"},
             {name: "user"}
         ]
     })
