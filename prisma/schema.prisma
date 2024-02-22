@@ -18,7 +18,7 @@ model Users {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   deleted     Boolean    @default(false)
-  position_id String     @db.Uuid
+  position_id String?    @db.Uuid
   role        Roles?     @relation(fields: [role_id], references: [id])
   Sessions    Sessions[]
   Contens     Content[]

@@ -7,34 +7,46 @@ import jwt from "jsonwebtoken"
 import 'dotenv/config'
 import { ResponseError } from "../error/response-error.js";
 
-const register = async (request) => {
-        const user = validate(registerUserValidation, request);
-        const defaultRole = "user"
-        const countUser = await prismaClient.users.findFirst({
-            where:{
-                email:request.email
-            }
-        })
-        const roles = await prismaClient.roles.findFirst({
-            where:{
-                name:defaultRole
-            }
-        })
-        if (countUser) {
-            throw new ResponseError(400, "Username already exists");
-        }
-        const salt = uuid.v4();
-        user.password = await hash(request.password, salt)
-        user.salt = salt
-        user.role_id = roles.id
+import {omit} from "../helper/omit.js";
 
-        return prismaClient.users.create({
-            data: user,
-            select: {
-                email: true,
-                name: true
+
+const register = async (request) => {
+    const user = validate(registerUserValidation, request);
+    const countUser = await prismaClient.users.findFirst({
+        where:{
+            email:request.email
+        }
+    })
+    const role = await prismaClient.roles.findFirst({
+        where:{
+            id:request.role_id
+        }
+    })
+    if (request.position_id) {
+        const position = await prismaClient.positions.findFirst({
+            where:{
+                id:request.position_id
             }
-        });
+        })
+        user.position = { connect: { id: position.id } }
+    }
+    if (countUser) {
+        throw new ResponseError(400, "Email already exists");
+    }
+    const salt = uuid.v4();
+    user.password = await hash(request.password, salt)
+    user.salt = salt
+    user.role = { connect: { id: role.id } }
+
+    console.log(user)
+
+    return prismaClient.users.create({
+        data: omit(user,["role_id","position_id"]),
+        select: {
+            name: true,
+            email: true
+        }
+    });
 }
 const login = async (request) => {
     const loginRequest = validate(loginUserValidation, request);
@@ -130,9 +142,22 @@ const refreshToken = async (request) => {
       return {access_token :accessToken}
 }
 
+const getAll = async(req) => {
+    return prismaClient.users.findMany({
+        select: {
+            id:true,
+            name:true,
+            email:true,
+            position_id:true,
+            role_id:true
+        }
+    })
+}
+
 export default {
     register,
     login,
     refreshToken,
-    logout
+    logout,
+    getAll
 }

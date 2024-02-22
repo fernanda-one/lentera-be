@@ -6,5 +6,6 @@ const privateRouter = new express.Router();
 privateRouter.use(authMiddleware)
 privateRouter.post("/api/users/refresh-token", userController.refreshToken);
 privateRouter.post("/api/users/logout", userController.logout);
+privateRouter.get("/api/users", userController.getList);
 
 export { privateRouter };

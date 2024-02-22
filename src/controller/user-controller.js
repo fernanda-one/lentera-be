@@ -44,9 +44,21 @@ const refreshToken = async (req, res, next) =>{
     }
 }
 
+const getList = async (req, res, next) =>{
+    try {
+        const result = await userService.getAll(req)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
 export default {
     register,
     login,
     refreshToken,
-    logout
+    logout,
+    getList
 }
