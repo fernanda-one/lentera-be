@@ -1,11 +1,11 @@
-import { prismaClient } from "../config/database.js";
-import { hash } from "../helper/bcyrpt.js";
-import { loginUserValidation, registerUserValidation } from "../validation/user-validation.js";
-import { validate } from "../validation/validation.js";
+import {prismaClient} from "../config/database.js";
+import {hash} from "../helper/bcyrpt.js";
+import {loginUserValidation, registerUserValidation, updateUserValidation} from "../validation/user-validation.js";
+import {validate} from "../validation/validation.js";
 import * as uuid from "uuid"
 import jwt from "jsonwebtoken"
 import 'dotenv/config'
-import { ResponseError } from "../error/response-error.js";
+import {ResponseError} from "../error/response-error.js";
 
 import {omit} from "../helper/omit.js";
 
@@ -13,22 +13,22 @@ import {omit} from "../helper/omit.js";
 const register = async (request) => {
     const user = validate(registerUserValidation, request);
     const countUser = await prismaClient.users.findFirst({
-        where:{
-            email:request.email
+        where: {
+            email: request.email
         }
     })
     const role = await prismaClient.roles.findFirst({
-        where:{
-            id:request.role_id
+        where: {
+            id: request.role_id
         }
     })
     if (request.position_id) {
         const position = await prismaClient.positions.findFirst({
-            where:{
-                id:request.position_id
+            where: {
+                id: request.position_id
             }
         })
-        user.position = { connect: { id: position.id } }
+        user.position = {connect: {id: position.id}}
     }
     if (countUser) {
         throw new ResponseError(400, "Email already exists");
@@ -36,18 +36,59 @@ const register = async (request) => {
     const salt = uuid.v4();
     user.password = await hash(request.password, salt)
     user.salt = salt
-    user.role = { connect: { id: role.id } }
+    user.role = {connect: {id: role.id}}
 
     console.log(user)
 
     return prismaClient.users.create({
-        data: omit(user,["role_id","position_id"]),
+        data: omit(user, ["role_id", "position_id"]),
         select: {
+            id:true,
             name: true,
             email: true
         }
     });
 }
+const update = async (request, id) => {
+    const user = validate(updateUserValidation, request);
+    const countUser = await prismaClient.users.findFirst({
+        where: {
+            email: request.email
+        }
+    })
+    const role = await prismaClient.roles.findFirst({
+        where: {
+            id: request.role_id
+        }
+    })
+    if (request.position_id) {
+        const position = await prismaClient.positions.findFirst({
+            where: {
+                id: request.position_id
+            }
+        })
+        user.position = {connect: {id: position.id}}
+    }
+    if (countUser && countUser.email !== request.email) {
+        throw new ResponseError(400, "Email already exists");
+    }
+    user.role = {connect: {id: role.id}}
+
+    console.log(user)
+
+    return prismaClient.users.update({
+        where: {
+            id
+        },
+        data: omit(user, ["role_id", "position_id"]),
+        select: {
+            id:true,
+            name: true,
+            email: true
+        }
+    });
+}
+
 const login = async (request) => {
     const loginRequest = validate(loginUserValidation, request);
     const user = await prismaClient.users.findFirst({
@@ -64,34 +105,34 @@ const login = async (request) => {
     }
     const session = await prismaClient.sessions.create({
         data: {
-          users_id: user.id,
-          refresh_token: uuid.v4(),
-          status: true,
+            users_id: user.id,
+            refresh_token: uuid.v4(),
+            status: true,
         },
-      });
-      const payload = {
+    });
+    const payload = {
         sub: user?.id,
         role: user?.role?.name,
         session_id: session.id,
         name: user?.name,
-        email:user?.email,
-        refresh_token:session.refresh_token
-      };
-      const secret_key = process.env.SECRET_JWT
-      const accessToken = jwt.sign(payload,secret_key, {
+        email: user?.email,
+        refresh_token: session.refresh_token
+    };
+    const secret_key = process.env.SECRET_JWT
+    const accessToken = jwt.sign(payload, secret_key, {
         expiresIn: '1d',
-      });
-      const refreshToken = session.refresh_token;
-      return {
+    });
+    const refreshToken = session.refresh_token;
+    return {
         access_token: accessToken,
         refresh_token: refreshToken,
-      };
+    };
 }
 const logout = async (request) => {
     console.log("🚀 ~ logout ~ request:", request.user)
-    const session_id =  request.user.session_id
+    const session_id = request.user.session_id
     const session = await prismaClient.sessions.findFirst({
-        where:{
+        where: {
             id: session_id
         }
     })
@@ -99,27 +140,27 @@ const logout = async (request) => {
         throw new ResponseError(401, "session not found!")
     }
     await prismaClient.sessions.updateMany({
-        where:{
+        where: {
             id: session_id
         },
-        data:{
-            status:false
+        data: {
+            status: false
         }
     })
 }
 
 const refreshToken = async (request) => {
     const refresh_token = request.user.refresh_token
-    if(!refresh_token) throw new ResponseError(401, "token not found")
+    if (!refresh_token) throw new ResponseError(401, "token not found")
     const session = await prismaClient.sessions.findFirst({
-        where:{
+        where: {
             refresh_token: refresh_token,
             status: true
-        }, 
-        include:{
-            users:{
-                include:{
-                    role:true
+        },
+        include: {
+            users: {
+                include: {
+                    role: true
                 }
             }
         }
@@ -133,23 +174,55 @@ const refreshToken = async (request) => {
         role: user?.role?.name,
         session_id: session.id,
         name: user?.name,
-        email:user?.email
-      };
-      const secret_key = process.env.SECRET_JWT
-      const accessToken = jwt.sign(payload,secret_key, {
+        email: user?.email
+    };
+    const secret_key = process.env.SECRET_JWT
+    const accessToken = jwt.sign(payload, secret_key, {
         expiresIn: '1d',
-      });
-      return {access_token :accessToken}
+    });
+    return {access_token: accessToken}
 }
 
-const getAll = async(req) => {
+const getAll = async (req) => {
     return prismaClient.users.findMany({
+        where: {
+            OR: [{
+                name: {contains: req.search}
+            },
+                {email: {contains: req.search}}]
+        },
         select: {
-            id:true,
-            name:true,
-            email:true,
-            position_id:true,
-            role_id:true
+            id: true,
+            name: true,
+            email: true,
+            position_id: true,
+            role_id: true
+        }
+    })
+}
+const detail = async (id) => {
+    return prismaClient.users.findFirst({
+        where: {
+            id
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            position_id: true,
+            role_id: true
+        }
+    })
+}
+
+const del = async (id) => {
+    return prismaClient.users.update({
+        where: {
+            id
+        },
+        select: {
+            deleted: true,
+            is_active: false
         }
     })
 }
@@ -159,5 +232,8 @@ export default {
     login,
     refreshToken,
     logout,
-    getAll
+    getAll,
+    detail,
+    del,
+    update
 }

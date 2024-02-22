@@ -10,6 +10,16 @@ const register = async (req, res, next) => {
         next(e);
     }
 }
+const update = async (req, res, next) => {
+    try {
+        const result = await userService.update(req.body,req.params.id);
+        res.status(200).json({
+            data: result
+        });
+    } catch (e) {
+        next(e);
+    }
+}
 
 const login = async (req, res, next) => {
     try {
@@ -26,14 +36,14 @@ const logout = async (req, res, next) => {
     try {
         const result = await userService.logout(req);
         res.status(200).json({
-            message:"success"
+            message: "success"
         })
     } catch (e) {
         next(e);
     }
 }
 
-const refreshToken = async (req, res, next) =>{
+const refreshToken = async (req, res, next) => {
     try {
         const result = await userService.refreshToken(req)
         res.status(200).json({
@@ -44,9 +54,30 @@ const refreshToken = async (req, res, next) =>{
     }
 }
 
-const getList = async (req, res, next) =>{
+const getList = async (req, res, next) => {
     try {
-        const result = await userService.getAll(req)
+        const result = await userService.getAll(req.query)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+
+const detail = async (req, res, next) => {
+    try {
+        const result = await userService.detail(req.params.id)
+        res.status(200).json({
+            data: result
+        })
+    } catch (e) {
+        next(e)
+    }
+}
+const del = async (req, res, next) => {
+    try {
+        const result = await userService.del(req.params.id)
         res.status(200).json({
             data: result
         })
@@ -60,5 +91,6 @@ export default {
     login,
     refreshToken,
     logout,
-    getList
+    getList,
+    detail, del, update
 }
