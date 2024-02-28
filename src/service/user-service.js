@@ -14,18 +14,21 @@ const register = async (request) => {
     const user = validate(registerUserValidation, request);
     const countUser = await prismaClient.users.findFirst({
         where: {
-            email: request.email
+            email: request.email,
+            deleted:false
         }
     })
     const role = await prismaClient.roles.findFirst({
         where: {
-            id: request.role_id
+            id: request.role_id,
+            deleted:false
         }
     })
     if (request.position_id) {
         const position = await prismaClient.positions.findFirst({
             where: {
-                id: request.position_id
+                id: request.position_id,
+                deleted: false
             }
         })
         user.position = {connect: {id: position.id}}
@@ -189,7 +192,8 @@ const getAll = async (req) => {
             OR: [{
                 name: {contains: req.search}
             },
-                {email: {contains: req.search}}]
+                {email: {contains: req.search}}],
+            deleted: false
         },
         select: {
             id: true,
@@ -203,7 +207,8 @@ const getAll = async (req) => {
 const detail = async (id) => {
     return prismaClient.users.findFirst({
         where: {
-            id
+            id,
+            deleted:false
         },
         select: {
             id: true,
