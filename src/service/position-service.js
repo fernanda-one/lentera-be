@@ -56,7 +56,7 @@ export const getDetail = async (id) => {
         throw new ResponseError(400, `Position with ID ${id} does not exist`);
     }
 
-    return prismaClient.positions.findMany({
+    return prismaClient.positions.findFirst({
         where: {
             id
         }

@@ -68,8 +68,8 @@ model Content {
   created_at              DateTime            @default(now())
   updated_at              DateTime            @updatedAt
   deleted                 Boolean             @default(false)
-  categories              ContentCategory     @relation(fields: [category_id], references: [id])
-  created_bys             Users               @relation(fields: [created_by], references: [id])
+  categories              ContentCategory?     @relation(fields: [category_id], references: [id])
+  created_bys             Users?               @relation(fields: [created_by], references: [id])
   SubContentCategory      SubContentCategory? @relation(fields: [sub_content_category_id], references: [id])
   sub_content_category_id String?             @db.Uuid
 }

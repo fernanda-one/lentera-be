@@ -65,7 +65,7 @@ export const getDetail = async (id) => {
         throw new ResponseError(400, `Role with ID ${id} does not exist`);
     }
 
-    return prismaClient.roles.findMany({
+    return prismaClient.roles.findFirst({
         where: {
             id
         }

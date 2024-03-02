@@ -67,7 +67,7 @@ export const getDetail = async (id) => {
         throw new ResponseError(400, `Sub Category with ID ${id} does not exist`);
     }
 
-    return prismaClient.contentCategory.findMany({
+    return prismaClient.contentCategory.findFirst({
         where: {
             id
         }
