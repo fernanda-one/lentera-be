@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # Command untuk menjalankan server Node.js
-CMD ["node", "main.js"]  
+CMD ["node", "src/main.js"]  
