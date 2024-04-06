@@ -1,45 +1,21 @@
-# PRODUCTION DOCKERFILE
-# ---------------------
-# This Dockerfile allows to build a Docker image of the NestJS application
-# and based on a NodeJS 16 image. The multi-stage mechanism allows to build
-# the application in a "builder" stage and then create a lightweight production
-# image containing the required dependencies and the JS build files.
-#
-# Dockerfile best practices
-# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
-# Dockerized NodeJS best practices
-# https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md
-# https://www.bretfisher.com/node-docker-good-defaults/
-# http://goldbergyoni.com/checklist-best-practice-of-node-js-in-production/
+# Gunakan image Node.js sebagai dasar
+FROM node:16
 
-FROM node:16-alpine as builder
+# Set direktori kerja di dalam kontainer
+WORKDIR /app
 
-ENV NODE_ENV build
+# Salin package.json dan package-lock.json (jika ada)
+COPY package*.json ./
 
-USER node
-WORKDIR /home/node
-
-COPY package.json .
-COPY yarn.lock .
-
-RUN yarn install --frozen-lockfile
-
-COPY . /home/node
-
+# Install dependensi
+RUN npm install --production
 RUN npx prisma generate
 
-RUN yarn run build \
-    && yarn install --production --ignore-scripts --prefer-offline
+# Salin kode aplikasi ke dalam kontainer
+COPY . .
 
-# ---
+# Expose port yang digunakan oleh server Node.js
+EXPOSE 5000
 
-FROM node:16-alpine
-
-USER node
-WORKDIR /home/node
-
-COPY --from=builder /home/node/package*.json /home/node/
-COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
-COPY --from=builder /home/node/template/ /home/node/template/
-
-CMD ["node", "src/main.js"]
+# Command untuk menjalankan server Node.js
+CMD ["node", "src/main.js"]  
