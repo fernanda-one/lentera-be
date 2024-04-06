@@ -14,7 +14,7 @@ RUN npm install --production
 COPY . .
 
 # Expose port yang digunakan oleh server Node.js
-EXPOSE 3000
+EXPOSE 5000
 
 # Command untuk menjalankan server Node.js
 CMD ["node", "main.js"]  
