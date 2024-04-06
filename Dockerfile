@@ -1,5 +1,6 @@
-# Gunakan image Node.js sebagai dasar
-FROM node:16
+# Gunakan image Node.js dengan versi yang bisa diatur
+ARG NODE_VERSION=18
+FROM node:${NODE_VERSION}
 
 # Set direktori kerja di dalam kontainer
 WORKDIR /app
@@ -7,11 +8,10 @@ WORKDIR /app
 # Salin package.json dan package-lock.json (jika ada)
 COPY package*.json ./
 
-# Install dependensi
-RUN npm install
-
-# Generate Prisma client
-RUN npx prisma generate
+# Install dependensi dan generate Prisma client
+RUN npm install && \
+    npm install -g prisma && \
+    npx prisma generate
 
 # Salin kode aplikasi ke dalam kontainer
 COPY . .
@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 5000
 
 # Command untuk menjalankan server Node.js
-CMD ["node", "src/main.js"]  
+CMD ["node", "src/main.js"]
