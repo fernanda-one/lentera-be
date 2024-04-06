@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Command untuk menjalankan server Node.js
-CMD ["node", "main.js"]
+CMD ["node", "main.js"]  

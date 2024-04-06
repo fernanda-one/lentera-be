@@ -3,12 +3,33 @@ version: '3'
 services:
   nodejs:
     build: .
+    container_name: nodejs
+    restart: unless-stopped
     ports:
       - "3000:3000"
+#     networks:
+#       - app-network
+#   webserver:
+#     image: nginx:latest
+#     container_name: webserver
+#     restart: unless-stopped
+#     ports:
+#       - "180:80"
+#     volumes:
+#       - web-root:/var/www/html
+#       - ./nginx-conf:/etc/nginx/conf.d
+#     depends_on:
+#       - nodejs
+#     networks:
+#       - app-network
+# volumes:
+#   web-root:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: /root/node-app
+#       o: bind
 
-  nginx:
-    build: ./nginx
-    ports:
-      - "180:80"
-    depends_on:
-      - nodejs
+# networks:
+#   app-network:
+#     driver: bridge
