@@ -8,7 +8,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependensi
-RUN npm install --production
+RUN npm install
+
+# Generate Prisma client
 RUN npx prisma generate
 
 # Salin kode aplikasi ke dalam kontainer
