@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependensi
-RUN npm install
+RUN npm install --production
 
 # Salin kode aplikasi ke dalam kontainer
 COPY . .
