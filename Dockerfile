@@ -1,23 +1,24 @@
-# Gunakan image Node.js dengan versi yang bisa diatur
-ARG NODE_VERSION=18
-FROM node:${NODE_VERSION}
-
-# Set direktori kerja di dalam kontainer
-WORKDIR /app
-
-# Salin package.json dan package-lock.json (jika ada)
-COPY package*.json ./
-
-# Install dependensi dan generate Prisma client
-RUN npm install && \
-    npm install -g prisma && \
-    npx prisma generate
-
-# Salin kode aplikasi ke dalam kontainer
+# Create image based on the official Node image from dockerhub
+FROM node:lts-buster
+ 
+# Create app directory
+WORKDIR /usr/src/app
+ 
+# Copy dependency definitions
+COPY package.json ./package.json
+COPY package-lock.json ./package-lock.json
+ 
+# Install dependencies
+#RUN npm set progress=false \
+#    && npm config set depth 0 \
+#    && npm i install
+RUN npm ci
+ 
+# Get all the code needed to run the app
 COPY . .
-
-# Expose port yang digunakan oleh server Node.js
+ 
+# Expose the port the app runs in
 EXPOSE 5000
-
-# Command untuk menjalankan server Node.js
-CMD ["node", "src/main.js"]
+ 
+# Serve the app
+CMD ["npm", "start"]
