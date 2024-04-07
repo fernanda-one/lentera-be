@@ -9,6 +9,8 @@ services:
       - "3000:3000"
     networks:
       - app-network
+
 networks:
   app-network:
-    driver: lentera_network
+    external: true
+    name: lentera_network
