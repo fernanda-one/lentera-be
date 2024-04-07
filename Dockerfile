@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /app
  
 # Copy dependency definitions
-COPY package*.json .
+COPY package*.json ./
  
 # Install dependencies
 #RUN npm set progress=false \
