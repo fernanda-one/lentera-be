@@ -8,9 +8,8 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - app-network
+      - lentera_network
 
 networks:
-  app-network:
+  lentera_network:
     external: true
-    name: lentera_network
