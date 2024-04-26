@@ -20,38 +20,28 @@ privateRouter.put("/api/users/:id", userController.update);
 
 privateRouter.post("/api/roles", roleController.createRole);
 privateRouter.put("/api/roles/:id", roleController.updateRole);
-privateRouter.get("/api/roles/:id", roleController.getAllRoles);
 privateRouter.delete("/api/roles/:id", roleController.delRole);
-privateRouter.get("/api/roles", roleController.getAllRoles);
 
 
 // Position
 
 privateRouter.post("/api/positions", positionController.createPosition);
 privateRouter.put("/api/positions/:id", positionController.updatePosition);
-privateRouter.get("/api/positions/:id", positionController.getAllPositions);
 privateRouter.delete("/api/positions/:id", positionController.delPosition);
-privateRouter.get("/api/positions", positionController.getAllPositions);
 // Category
 
 privateRouter.post("/api/categories", categoryController.createCategory);
 privateRouter.put("/api/categories/:id", categoryController.updateCategory);
-privateRouter.get("/api/categories/:id", categoryController.getDetailCategory);
 privateRouter.delete("/api/categories/:id", categoryController.deleteCategory);
-privateRouter.get("/api/categories", categoryController.getCategory);
 // Sub Category
 
 privateRouter.post("/api/sub_categories", subCategoryController.createSubCategory);
 privateRouter.put("/api/sub_categories/:id", subCategoryController.updateSubCategory);
-privateRouter.get("/api/sub_categories/:id", subCategoryController.getDetailSubCategory);
 privateRouter.delete("/api/sub_categories/:id", subCategoryController.deleteSubCategory);
-privateRouter.get("/api/sub_categories", subCategoryController.getSubCategory);
-// Sub Category
+// Content
 //
 privateRouter.post("/api/content", contentController.createContent);
 privateRouter.put("/api/content/:id", contentController.updateContent);
-privateRouter.get("/api/content/:id", contentController.getAllContents);
 privateRouter.delete("/api/content/:id", contentController.delContent);
-privateRouter.get("/api/content", contentController.getAllContents);
 
 export { privateRouter };
