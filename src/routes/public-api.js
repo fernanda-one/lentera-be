@@ -6,7 +6,7 @@ import * as contentController from "../controller/content-controller.js";
 
 const publicRouter = new express.Router();
 publicRouter.post("/api/users", userController.register);
-publicRouter.post("/api/users/login", userController.login);
+publicRouter.post("/api/login", userController.login);
 publicRouter.get("/", async (req, res, next) => {
   res.status(200).json({
     message: "success",
