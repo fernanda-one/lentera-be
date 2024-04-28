@@ -8,7 +8,7 @@ import * as contentController from "../controller/content-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 
 const privateRouter = new express.Router();
-privateRouter.use(authMiddleware)
+privateRouter.use(authMiddleware);
 privateRouter.post("/api/users/refresh-token", userController.refreshToken);
 privateRouter.post("/api/users/logout", userController.logout);
 privateRouter.get("/api/users", userController.getList);
@@ -22,7 +22,6 @@ privateRouter.post("/api/roles", roleController.createRole);
 privateRouter.put("/api/roles/:id", roleController.updateRole);
 privateRouter.delete("/api/roles/:id", roleController.delRole);
 
-
 // Position
 
 privateRouter.post("/api/positions", positionController.createPosition);
@@ -35,9 +34,18 @@ privateRouter.put("/api/categories/:id", categoryController.updateCategory);
 privateRouter.delete("/api/categories/:id", categoryController.deleteCategory);
 // Sub Category
 
-privateRouter.post("/api/sub_categories", subCategoryController.createSubCategory);
-privateRouter.put("/api/sub_categories/:id", subCategoryController.updateSubCategory);
-privateRouter.delete("/api/sub_categories/:id", subCategoryController.deleteSubCategory);
+privateRouter.post(
+  "/api/sub_categories",
+  subCategoryController.createSubCategory
+);
+privateRouter.put(
+  "/api/sub_categories/:id",
+  subCategoryController.updateSubCategory
+);
+privateRouter.delete(
+  "/api/sub_categories/:id",
+  subCategoryController.deleteSubCategory
+);
 // Content
 //
 privateRouter.post("/api/content", contentController.createContent);
