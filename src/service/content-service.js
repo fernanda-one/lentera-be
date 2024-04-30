@@ -38,12 +38,20 @@ export const saveContent = async (req,user) => {
 }
 
 export const getAll = async (req) => {
-    return prismaClient.Content.findMany({
+    const query  = {
         where: {
             tittle: {contains: req.search},
             deleted: false
         }
-    })
+    }
+    if (req.category_id) {
+        query.where.category_id = req.category_id
+    }
+    if (req.sub_category_id) {
+        query.where.sub_content_category_id = req.sub_category_id
+    }
+
+    return prismaClient.Content.findMany(query)
 }
 export const getDetail = async (id) => {
     const isExist = await prismaClient.content.findFirst({

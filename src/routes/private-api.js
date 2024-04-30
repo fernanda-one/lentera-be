@@ -6,6 +6,7 @@ import * as categoryController from "../controller/category-controller.js";
 import * as subCategoryController from "../controller/sub-category-controller.js";
 import * as contentController from "../controller/content-controller.js";
 import { authMiddleware } from "../middleware/auth-middleware.js";
+import {getAllRoles} from "../controller/role-controller.js";
 
 const privateRouter = new express.Router();
 privateRouter.use(authMiddleware);
@@ -21,6 +22,8 @@ privateRouter.put("/api/users/:id", userController.update);
 privateRouter.post("/api/roles", roleController.createRole);
 privateRouter.put("/api/roles/:id", roleController.updateRole);
 privateRouter.delete("/api/roles/:id", roleController.delRole);
+privateRouter.get("/api/roles", roleController.getAllRoles);
+privateRouter.get("/api/roles/:id", roleController.getAllRoles);
 
 // Position
 
