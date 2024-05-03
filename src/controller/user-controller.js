@@ -24,7 +24,7 @@ const update = async (req, res, next) => {
 
 const updateStatus = async (req, res, next) => {
     try {
-        const result = await userService.updateStatus(req.params.id);
+        const result = await userService.updateStatus(req.params.id,req.user.role);
         res.status(200).json({
             data: result
         });

@@ -96,7 +96,7 @@ const update = async (request, id) => {
     },
   });
 };
-const updateStatus = async (id) => {
+const updateStatus = async (id,role_id) => {
   const countUser = await prismaClient.users.findFirst({
     where: {
       id
@@ -105,6 +105,15 @@ const updateStatus = async (id) => {
 
   if (!countUser) {
     throw new ResponseError(400, "User Not Found");
+  }
+  const role = await prismaClient.roles.findFirst({
+    where: {
+      id: role_id
+    },
+  });
+
+  if (role.name !== 'admin') {
+    throw new ResponseError(400, "only admin can update this action");
   }
   countUser.is_active = true;
 
@@ -147,7 +156,7 @@ const login = async (request) => {
   });
   const payload = {
     sub: user?.id,
-    role: user?.role?.name,
+    role: user?.role_id,
     session_id: session.id,
     name: user?.name,
     email: user?.email,
@@ -195,7 +204,7 @@ const refreshToken = async (request) => {
     include: {
       users: {
         include: {
-          role: true,
+          roles: true,
         },
       },
     },
@@ -203,7 +212,9 @@ const refreshToken = async (request) => {
   if (!session) {
     throw new ResponseError(401, "session not found!");
   }
+
   const user = session?.users;
+  console.log(user)
   const payload = {
     sub: user?.id,
     role: user?.role?.name,
