@@ -12,9 +12,11 @@ import "dotenv/config";
 import { ResponseError } from "../error/response-error.js";
 
 import { omit } from "../helper/omit.js";
+import {updateStatusUserValidation} from "../validation/update-status-user-validation.js";
 
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
+  console.log(user)
   const countUser = await prismaClient.users.findFirst({
     where: {
       email: request.email,
@@ -94,6 +96,30 @@ const update = async (request, id) => {
     },
   });
 };
+const updateStatus = async (id) => {
+  const countUser = await prismaClient.users.findFirst({
+    where: {
+      id
+    },
+  });
+
+  if (!countUser) {
+    throw new ResponseError(400, "User Not Found");
+  }
+  countUser.is_active = true;
+
+  return prismaClient.users.update({
+    where: {
+      id,
+    },
+    data: omit(countUser, ["role_id", "position_id"]),
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
+};
 
 const login = async (request) => {
   const loginRequest = validate(loginUserValidation, request);
@@ -104,6 +130,9 @@ const login = async (request) => {
   });
   if (!user) {
     throw new ResponseError(401, "Email or password wrong");
+  }
+  if (!user.is_active) {
+    throw new ResponseError(401, "User inactive");
   }
   const hashedPassword = await hash(loginRequest.password, user.salt);
   if (hashedPassword !== user.password) {
@@ -246,4 +275,5 @@ export default {
   detail,
   del,
   update,
+  updateStatus
 };

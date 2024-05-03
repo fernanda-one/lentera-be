@@ -16,6 +16,7 @@ privateRouter.get("/api/users", userController.getList);
 privateRouter.get("/api/users/:id", userController.detail);
 privateRouter.delete("/api/users/:id", userController.del);
 privateRouter.put("/api/users/:id", userController.update);
+privateRouter.put("/api/users-status/:id", userController.updateStatus);
 
 // Role
 

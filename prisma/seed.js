@@ -11,7 +11,7 @@ const main = async () => {
 const seedContentCategory = async () => {
   await prismaClient.contentCategory.createMany({
     data: [
-      { id: "b7d356fb-f506-4ed8-ae99-ff79373cfa88", name: "news" },
+      { id: "b7d356fb-f506-4ed8-ae99-ff79373cfa90", name: "news" },
       { id: "740e4e37-907c-4de0-81f1-fdcca7debd9d", name: "article" },
       { id: "2ef5b07b-0c6f-47c1-9631-bf98a2786dd7", name: "common" },
       { id: "c45bfd26-375f-4c34-8bad-8333bac2eed6", name: "opinion" },
@@ -44,7 +44,7 @@ const seedUsers = async () => {
         password: await hash("12345", salt),
       },
       {
-        id: "b7d356fb-f506-4ed8-ae99-ff79373cfa88",
+        id: "b7d356fb-f506-4ed8-ae99-ff79373cfa89",
         name: "user",
         email: "user@lentera_be.com",
         role_id: "04fc88ad-b2fe-4dbb-bf69-8d2cf65d0f7f",

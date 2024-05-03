@@ -2,6 +2,7 @@ import userService from "../service/user-service.js";
 
 const register = async (req, res, next) => {
     try {
+        req.body.is_active = false;
         const result = await userService.register(req.body);
         res.status(200).json({
             data: result
@@ -13,6 +14,17 @@ const register = async (req, res, next) => {
 const update = async (req, res, next) => {
     try {
         const result = await userService.update(req.body,req.params.id);
+        res.status(200).json({
+            data: result
+        });
+    } catch (e) {
+        next(e);
+    }
+}
+
+const updateStatus = async (req, res, next) => {
+    try {
+        const result = await userService.updateStatus(req.params.id);
         res.status(200).json({
             data: result
         });
@@ -92,5 +104,5 @@ export default {
     refreshToken,
     logout,
     getList,
-    detail, del, update
+    detail, del, update,updateStatus
 }
